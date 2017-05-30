@@ -23,7 +23,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**
- * Super simple battery
+ * Super simple node
  *
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
  * Created by Dark(DarkGuardsman, Robert) on 5/30/2017.
@@ -41,14 +41,20 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
     private boolean energyHadChanged = true;
     private boolean infinite = false;
 
-    private int textureIndex = 0;
+    private int textureIndex = -1;
 
     /** Bitmask use to check if a wire can connect on a side **/
     private byte canConnectSide = 0;
 
     public TileNodeBattery()
     {
-        super("battery", PowerAndWiresMod.DOMAIN);
+        super("node", PowerAndWiresMod.DOMAIN);
+    }
+
+    @Override
+    public void firstTick()
+    {
+        super.firstTick();
     }
 
     @Override
@@ -76,7 +82,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
                         if (UniversalEnergySystem.isHandler(tile, direction.getOpposite()))
                         {
                             //Test remove, or actual remove call if infinite
-                            double removed = UniversalEnergySystem.fill(tile, direction.getOpposite(), buffer.getEnergyStored(), !infinite);
+                            double removed = UniversalEnergySystem.fill(tile, direction.getOpposite(), buffer.getEnergyStored(), infinite);
                             if (!infinite)
                             {
                                 //Second remove call removes the actual energy to ensure buffer drained correctly
@@ -118,7 +124,12 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
     {
         super.readDescPacket(buf);
         getEnergyBuffer(ForgeDirection.UNKNOWN).setEnergyStored(buf.readInt());
+        int prev = textureIndex;
         textureIndex = (int) Math.floor(((float) buffer.getEnergyStored() / (float) buffer.getMaxBufferSize()) * 15);  //TODO add a json data file to the texture file to get max number of states, potentially use animation file
+        if (textureIndex != prev)
+        {
+            world().markBlockRangeForRenderUpdate(xi(), yi(), zi(), xi(), yi(), zi());
+        }
     }
 
     @Override
@@ -183,7 +194,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
     {
         if (buffer == null)
         {
-            buffer = new EnergyBuffer(maxEnergy);
+            buffer = new BatteryBuffer(this);
         }
         return buffer;
     }
@@ -191,10 +202,27 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
     @Override
     public String getContentStateForSide(int side, int meta)
     {
-        if (getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored() <= 0)
+        if (getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored() <= 0 || textureIndex == -1)
         {
             return "";
         }
         return "power." + textureIndex;
+    }
+
+    public static class BatteryBuffer extends EnergyBuffer
+    {
+        public final TileNodeBattery node;
+
+        public BatteryBuffer(TileNodeBattery node)
+        {
+            super(TileNodeBattery.maxEnergy);
+            this.node = node;
+        }
+
+        @Override
+        protected void onPowerChange(int prevEnergy, int current, EnergyActionType actionType)
+        {
+            node.energyHadChanged = true;
+        }
     }
 }

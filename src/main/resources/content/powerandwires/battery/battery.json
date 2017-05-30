@@ -4,7 +4,12 @@
   },
   "block": {
     "name": "simpleBattery",
-    "id": "pawSimpleBattery",
+    "id": "simpleBattery",
+    "pickBlock": "block@icbmLauncherParts",
+    "tileEntity": {
+      "id": "pawSimpleBattery",
+      "class": "com.builtbroken.paw.content.battery.TileWrappedBattery"
+    },
     "hardness": 10,
     "resistance": 10,
     "mod": "powerandwires",
@@ -14,7 +19,7 @@
     ]
   },
   "render": {
-    "contentID": "pawSimpleBattery",
+    "contentID": "powerandwires:simpleBattery",
     "type": "block",
     "states": [
       {
@@ -25,7 +30,7 @@
       {
         "for": {
           "start": 0,
-          "end": 14,
+          "end": 15,
           "state": {
             "id": "block.power.%number%",
             "renderType": "block",
@@ -35,5 +40,23 @@
         }
       }
     ]
+  },
+  "texture": {
+    "key": "powerandwires:batterySide",
+    "domain": "powerandwires",
+    "name": "battery/side",
+    "type": "block"
+  },
+  "texture:1": {
+    "for": {
+      "start": 0,
+      "end": 15,
+      "state": {
+        "key": "powerandwires:battery%number%",
+        "domain": "powerandwires",
+        "name": "battery/battery%number%",
+        "type": "block"
+      }
+    }
   }
 }

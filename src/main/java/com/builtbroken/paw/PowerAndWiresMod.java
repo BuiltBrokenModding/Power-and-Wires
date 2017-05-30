@@ -29,7 +29,6 @@ public class PowerAndWiresMod extends AbstractMod
     public static final String VERSION = MAJOR_VERSION + "." + MINOR_VERSION + "." + REVISION_VERSION + "." + BUILD_VERSION;
 
     public static final String DOMAIN = "powerandwires";
-
     public static final String PREFX = DOMAIN + ":";
 
     /** Information output thing */
