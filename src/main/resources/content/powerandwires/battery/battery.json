@@ -1,0 +1,39 @@
+{
+  "author": {
+    "name": "powerandwires"
+  },
+  "block": {
+    "name": "simpleBattery",
+    "id": "pawSimpleBattery",
+    "hardness": 10,
+    "resistance": 10,
+    "mod": "powerandwires",
+    "material": "iron",
+    "listeners": [
+      "jsonTileIcon"
+    ]
+  },
+  "render": {
+    "contentID": "pawSimpleBattery",
+    "type": "block",
+    "states": [
+      {
+        "id": "block",
+        "renderType": "block",
+        "textureID": "powerandwires:batterySide"
+      },
+      {
+        "for": {
+          "start": 0,
+          "end": 14,
+          "state": {
+            "id": "block.power.%number%",
+            "renderType": "block",
+            "parent": "block",
+            "sides": "powerandwires:battery%number%"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -13,6 +13,7 @@ import com.builtbroken.mc.lib.energy.UniversalEnergySystem;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
 import com.builtbroken.mc.prefab.energy.EnergyBuffer;
 import com.builtbroken.paw.PowerAndWiresMod;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
@@ -40,6 +41,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
     private boolean energyHadChanged = true;
     private boolean infinite = false;
 
+    private int textureIndex = 0;
 
     /** Bitmask use to check if a wire can connect on a side **/
     private byte canConnectSide = 0;
@@ -100,7 +102,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
                 if (energyHadChanged)
                 {
                     energyHadChanged = false;
-                    //TODO trigger re-render
+                    sendDescPacket();
                 }
             }
         }
@@ -112,6 +114,21 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
     }
 
     @Override
+    public void readDescPacket(ByteBuf buf)
+    {
+        super.readDescPacket(buf);
+        getEnergyBuffer(ForgeDirection.UNKNOWN).setEnergyStored(buf.readInt());
+        textureIndex = (int) Math.floor(((float) buffer.getEnergyStored() / (float) buffer.getMaxBufferSize()) * 15);  //TODO add a json data file to the texture file to get max number of states, potentially use animation file
+    }
+
+    @Override
+    public void writeDescPacket(ByteBuf buf)
+    {
+        super.writeDescPacket(buf);
+        buf.writeInt(getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored());
+    }
+
+    @Override
     public boolean onPlayerActivated(EntityPlayer player, int side, float hitX, float hitY, float hitZ)
     {
         //Ignore clicks with block to allow easy building
@@ -119,7 +136,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
         {
             if (isServer())
             {
-                if (Engine.runningAsDev && player.getHeldItem() != null)
+                if (Engine.runningAsDev && player.getHeldItem() != null) //TODO maybe do a creative mode or admin check in place of dev mode check
                 {
                     if (player.getHeldItem().getItem() == Items.redstone)
                     {
@@ -174,6 +191,10 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
     @Override
     public String getContentStateForSide(int side, int meta)
     {
-        return "";
+        if (getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored() <= 0)
+        {
+            return "";
+        }
+        return "power." + textureIndex;
     }
 }
