@@ -1,0 +1,71 @@
+{
+  "author": {
+    "name": "powerandwires"
+  },
+  "block": {
+    "name": "plateGenerator",
+    "id": "plateGenerator",
+    "pickBlock": "block@icbmLauncherParts",
+    "tileEntity": {
+      "id": "pawPlateGenerator",
+      "class": "com.builtbroken.paw.content.gen.TileWrapperPlateGen"
+    },
+    "hardness": 10,
+    "resistance": 10,
+    "mod": "powerandwires",
+    "material": "iron",
+    "blockBounds": {
+      "min": {
+        "x": 0.1,
+        "y": 0,
+        "z": 0.1
+      },
+      "max": {
+        "x": 0.9,
+        "y": 0.2,
+        "z": 0.9
+      }
+    },
+    "selectionBounds": {
+      "min": {
+        "x": 0.1,
+        "y": 0,
+        "z": 0.1
+      },
+      "max": {
+        "x": 0.9,
+        "y": 0.2,
+        "z": 0.9
+      }
+    },
+    "renderBounds": {
+      "min": {
+        "x": 0.1,
+        "y": 0,
+        "z": 0.1
+      },
+      "max": {
+        "x": 0.9,
+        "y": 0.2,
+        "z": 0.9
+      }
+    }
+  },
+  "render": {
+    "contentID": "powerandwires:plateGenerator",
+    "type": "block",
+    "states": [
+      {
+        "id": "block",
+        "renderType": "block",
+        "textureID": "powerandwires:plate"
+      }
+    ]
+  },
+  "texture": {
+    "key": "powerandwires:plate",
+    "domain": "powerandwires",
+    "name": "plateGen",
+    "type": "block"
+  }
+}

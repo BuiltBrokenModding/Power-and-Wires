@@ -6,9 +6,9 @@
 //-------------------------------------------------------
 //Built on: Rober
 //=======================================================
-package com.builtbroken.paw.content.battery;
+package com.builtbroken.paw.content.gen;
 
-import com.builtbroken.paw.content.battery.TileNodeBattery;
+import com.builtbroken.paw.content.gen.TileNodePlateGen;
 import cofh.api.energy.IEnergyHandler;
 import com.builtbroken.mc.api.energy.IEnergyBuffer;
 import com.builtbroken.mc.api.energy.IEnergyBufferProvider;
@@ -20,11 +20,11 @@ import com.builtbroken.mc.lib.energy.UniversalEnergySystem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileWrappedBattery extends TileEntityWrapper implements IEnergyBufferProvider, IEnergyHandler
+public class TileWrapperPlateGen extends TileEntityWrapper implements IEnergyBufferProvider, IEnergyHandler
 {
-	public TileWrappedBattery()
+	public TileWrapperPlateGen()
 	{
-		super(new TileNodeBattery());
+		super(new TileNodePlateGen());
 	}
 
 	//============================
