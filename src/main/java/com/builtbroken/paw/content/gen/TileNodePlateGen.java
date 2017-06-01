@@ -47,6 +47,7 @@ public class TileNodePlateGen extends TileNode implements IEnergyBufferProvider
         {
             outputPower();
             checkForStep();
+            //TODO generate power based on fall distance of entity allowing mob farms to generate lots of power
         }
     }
 

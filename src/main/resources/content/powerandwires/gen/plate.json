@@ -14,6 +14,7 @@
     "resistance": 10,
     "mod": "powerandwires",
     "material": "iron",
+    "isOpaqueCube": false,
     "blockBounds": {
       "min": {
         "x": 0.1,
@@ -22,7 +23,7 @@
       },
       "max": {
         "x": 0.9,
-        "y": 0.2,
+        "y": 0.1,
         "z": 0.9
       }
     },
@@ -34,7 +35,7 @@
       },
       "max": {
         "x": 0.9,
-        "y": 0.2,
+        "y": 0.1,
         "z": 0.9
       }
     },
@@ -46,7 +47,7 @@
       },
       "max": {
         "x": 0.9,
-        "y": 0.2,
+        "y": 0.1,
         "z": 0.9
       }
     }
