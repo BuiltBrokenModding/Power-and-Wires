@@ -1,16 +1,21 @@
 package com.builtbroken.paw.content.gen;
 
-import com.builtbroken.mc.api.energy.IEnergyBuffer;
 import com.builtbroken.mc.api.energy.IEnergyBufferProvider;
+import com.builtbroken.mc.api.tile.ConnectionType;
+import com.builtbroken.mc.api.tile.ITileConnection;
+import com.builtbroken.mc.api.tile.listeners.IActivationListener;
 import com.builtbroken.mc.codegen.annotations.EnergyWrapped;
 import com.builtbroken.mc.codegen.annotations.TileWrapped;
-import com.builtbroken.mc.framework.logic.TileNode;
 import com.builtbroken.mc.lib.energy.UniversalEnergySystem;
-import com.builtbroken.mc.prefab.energy.EnergyBuffer;
+import com.builtbroken.mc.lib.helper.LanguageUtility;
+import com.builtbroken.mc.prefab.energy.EnergyBufferWrapper;
+import com.builtbroken.mc.prefab.tile.logic.TilePowerNode;
 import com.builtbroken.paw.PowerAndWiresMod;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.List;
@@ -23,12 +28,10 @@ import java.util.List;
  */
 @TileWrapped(className = "TileWrapperPlateGen")
 @EnergyWrapped()
-public class TileNodePlateGen extends TileNode implements IEnergyBufferProvider
+public class TileNodePlateGen extends TilePowerNode implements IEnergyBufferProvider, IActivationListener, ITileConnection
 {
     public static int BUFFER_SIZE = 100;
     public static int POWER_GEN = 10;
-
-    protected IEnergyBuffer buffer;
 
     boolean wasSteppedOn = false;
 
@@ -51,15 +54,46 @@ public class TileNodePlateGen extends TileNode implements IEnergyBufferProvider
         }
     }
 
+    @Override
+    public boolean onPlayerActivated(EntityPlayer player, int side, float hitX, float hitY, float hitZ)
+    {
+        if (isServer())
+        {
+            player.addChatComponentMessage(new ChatComponentText(LanguageUtility.getLocal("text.ue.power.amount").replace("%1", "" + getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored()).replace("%2", "" + BUFFER_SIZE)));
+        }
+        return false;
+    }
+
+    @Override
+    protected EnergyBufferWrapper createEnergySideWrapper()
+    {
+        return new EnergyBufferWrapper(getEnergyBuffer(ForgeDirection.UNKNOWN)).disableInput();
+    }
+
+    @Override
+    public int getEnergyBufferSize()
+    {
+        return BUFFER_SIZE;
+    }
+
     protected void outputPower()
     {
-        TileEntity tile = world().getTileEntity(xi(), yi() - 1, zi());
-        if (UniversalEnergySystem.isHandler(tile, ForgeDirection.UP))
+        if (getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored() > 0)
         {
-            //Test remove, or actual remove call if infinite
-            double removed = UniversalEnergySystem.fill(tile, ForgeDirection.UP, getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored(), false);
-            //Second remove call removes the actual energy to ensure buffer drained correctly
-            UniversalEnergySystem.fill(tile, ForgeDirection.UP, buffer.removeEnergyFromStorage((int) Math.ceil(removed), true), true);
+            TileEntity tile = world().getTileEntity(xi(), yi() - 1, zi());
+            if (UniversalEnergySystem.isHandler(tile, ForgeDirection.UP))
+            {
+                //test fill on target
+                int filled = (int) Math.ceil(UniversalEnergySystem.fill(tile, ForgeDirection.UP, getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored(), false));
+                //Do remove based on test result
+                int removed = getEnergyBuffer(ForgeDirection.UNKNOWN).removeEnergyFromStorage(filled, true);
+                //Do actual fill based on how much was removed from battery
+                double aFill = Math.ceil(UniversalEnergySystem.fill(tile, ForgeDirection.UP, removed, true));
+                if (aFill != filled)
+                {
+                    System.out.println("Error: final fill did not match test fill");
+                }
+            }
         }
     }
 
@@ -82,20 +116,16 @@ public class TileNodePlateGen extends TileNode implements IEnergyBufferProvider
             }
         }
 
-        if (!wasSteppedOn)
+        if (!wasSteppedOn && somethingAbove)
         {
-            getEnergyBuffer(ForgeDirection.UNKNOWN).addEnergyToStorage(POWER_GEN, true);
+            getEnergyBuffer(ForgeDirection.UNKNOWN).addEnergyToStorage(Math.min(POWER_GEN * count, 100), true);
         }
         wasSteppedOn = somethingAbove;
     }
 
     @Override
-    public IEnergyBuffer getEnergyBuffer(ForgeDirection side)
+    public boolean canConnect(TileEntity connection, ConnectionType type, ForgeDirection from)
     {
-        if (buffer == null)
-        {
-            buffer = new EnergyBuffer(BUFFER_SIZE);
-        }
-        return buffer;
+        return from == ForgeDirection.DOWN && super.canConnect(connection, type, from);
     }
 }

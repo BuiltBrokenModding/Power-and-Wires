@@ -33,7 +33,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, IActivationListener, IJsonIconState
 {
     //Settings
-    public static int maxEnergy = 1000000;
+    public static int BUFFER_SIZE = 1000000;
 
     protected IEnergyBuffer buffer;
 
@@ -151,7 +151,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
                 {
                     if (player.getHeldItem().getItem() == Items.redstone)
                     {
-                        getEnergyBuffer(ForgeDirection.UNKNOWN).addEnergyToStorage(maxEnergy, true);
+                        getEnergyBuffer(ForgeDirection.UNKNOWN).addEnergyToStorage(BUFFER_SIZE, true);
                         player.addChatComponentMessage(new ChatComponentText("Energy has been restored to max"));
                     }
                     else if (player.getHeldItem().getItem() == Items.glowstone_dust)
@@ -160,7 +160,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
                         player.addChatComponentMessage(new ChatComponentText("Power set to infinite: " + infinite));
                     }
                 }
-                player.addChatComponentMessage(new ChatComponentText(LanguageUtility.getLocal("text.ue.power.amount").replace("%1", "" + getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored()).replace("%2", "" + maxEnergy)));
+                player.addChatComponentMessage(new ChatComponentText(LanguageUtility.getLocal("text.ue.power.amount").replace("%1", "" + getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored()).replace("%2", "" + BUFFER_SIZE)));
             }
             return true;
         }
@@ -215,7 +215,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
 
         public BatteryBuffer(TileNodeBattery node)
         {
-            super(TileNodeBattery.maxEnergy);
+            super(TileNodeBattery.BUFFER_SIZE);
             this.node = node;
         }
 
