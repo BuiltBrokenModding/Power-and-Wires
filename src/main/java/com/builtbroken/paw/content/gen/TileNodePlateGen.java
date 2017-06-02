@@ -6,6 +6,7 @@ import com.builtbroken.mc.api.tile.ITileConnection;
 import com.builtbroken.mc.api.tile.listeners.IActivationListener;
 import com.builtbroken.mc.codegen.annotations.EnergyWrapped;
 import com.builtbroken.mc.codegen.annotations.TileWrapped;
+import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.lib.energy.UniversalEnergySystem;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
 import com.builtbroken.mc.prefab.energy.EnergyBufferWrapper;
@@ -89,7 +90,7 @@ public class TileNodePlateGen extends TilePowerNode implements IEnergyBufferProv
                 int removed = getEnergyBuffer(ForgeDirection.UNKNOWN).removeEnergyFromStorage(filled, true);
                 //Do actual fill based on how much was removed from battery
                 double aFill = Math.ceil(UniversalEnergySystem.fill(tile, ForgeDirection.UP, removed, true));
-                if (aFill != filled)
+                if (aFill != filled && Engine.runningAsDev)
                 {
                     System.out.println("Error: final fill did not match test fill");
                 }
