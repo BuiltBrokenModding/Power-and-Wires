@@ -3,15 +3,14 @@ package com.builtbroken.paw.content.battery;
 import com.builtbroken.mc.api.energy.IEnergyBuffer;
 import com.builtbroken.mc.api.energy.IEnergyBufferProvider;
 import com.builtbroken.mc.api.tile.client.IJsonIconState;
-import com.builtbroken.mc.api.tile.listeners.IActivationListener;
-import com.builtbroken.mc.codegen.annotations.EnergyWrapped;
 import com.builtbroken.mc.codegen.annotations.TileWrapped;
 import com.builtbroken.mc.core.Engine;
+import com.builtbroken.mc.framework.block.imp.IActivationListener;
+import com.builtbroken.mc.framework.energy.UniversalEnergySystem;
+import com.builtbroken.mc.framework.energy.data.EnergyBuffer;
 import com.builtbroken.mc.framework.logic.TileNode;
 import com.builtbroken.mc.imp.transform.vector.Pos;
-import com.builtbroken.mc.lib.energy.UniversalEnergySystem;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
-import com.builtbroken.mc.prefab.energy.EnergyBuffer;
 import com.builtbroken.paw.PowerAndWiresMod;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,8 +27,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
  * Created by Dark(DarkGuardsman, Robert) on 5/30/2017.
  */
-@TileWrapped(className = "TileWrappedBattery")
-@EnergyWrapped()
+@TileWrapped(className = "TileWrappedBattery", wrappers = "Energy")
 public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, IActivationListener, IJsonIconState
 {
     //Settings
@@ -78,7 +76,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
                     if (canExportSide(direction))
                     {
                         Pos pos = toPos().add(direction);
-                        TileEntity tile = pos.getTileEntity(world());
+                        TileEntity tile = pos.getTileEntity(world().unwrap());
                         if (UniversalEnergySystem.isHandler(tile, direction.getOpposite()))
                         {
                             //Test remove, or actual remove call if infinite
@@ -128,7 +126,7 @@ public class TileNodeBattery extends TileNode implements IEnergyBufferProvider, 
         textureIndex = (int) Math.floor(((float) buffer.getEnergyStored() / (float) buffer.getMaxBufferSize()) * 15);  //TODO add a json data file to the texture file to get max number of states, potentially use animation file
         if (textureIndex != prev)
         {
-            world().markBlockRangeForRenderUpdate(xi(), yi(), zi(), xi(), yi(), zi());
+            world().unwrap().markBlockRangeForRenderUpdate(xi(), yi(), zi(), xi(), yi(), zi());
         }
     }
 

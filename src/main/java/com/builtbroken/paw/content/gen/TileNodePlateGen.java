@@ -3,11 +3,10 @@ package com.builtbroken.paw.content.gen;
 import com.builtbroken.mc.api.energy.IEnergyBufferProvider;
 import com.builtbroken.mc.api.tile.ConnectionType;
 import com.builtbroken.mc.api.tile.ITileConnection;
-import com.builtbroken.mc.api.tile.listeners.IActivationListener;
-import com.builtbroken.mc.codegen.annotations.EnergyWrapped;
 import com.builtbroken.mc.codegen.annotations.TileWrapped;
 import com.builtbroken.mc.core.Engine;
-import com.builtbroken.mc.lib.energy.UniversalEnergySystem;
+import com.builtbroken.mc.framework.block.imp.IActivationListener;
+import com.builtbroken.mc.framework.energy.UniversalEnergySystem;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
 import com.builtbroken.mc.prefab.energy.EnergyBufferWrapper;
 import com.builtbroken.mc.prefab.tile.logic.TilePowerNode;
@@ -27,8 +26,7 @@ import java.util.List;
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
  * Created by Dark(DarkGuardsman, Robert) on 6/1/2017.
  */
-@TileWrapped(className = "TileWrapperPlateGen")
-@EnergyWrapped()
+@TileWrapped(className = "TileWrapperPlateGen", wrappers = "Energy")
 public class TileNodePlateGen extends TilePowerNode implements IEnergyBufferProvider, IActivationListener, ITileConnection
 {
     public static int BUFFER_SIZE = 100;
@@ -81,7 +79,7 @@ public class TileNodePlateGen extends TilePowerNode implements IEnergyBufferProv
     {
         if (getEnergyBuffer(ForgeDirection.UNKNOWN).getEnergyStored() > 0)
         {
-            TileEntity tile = world().getTileEntity(xi(), yi() - 1, zi());
+            TileEntity tile = world().unwrap().getTileEntity(xi(), yi() - 1, zi());
             if (UniversalEnergySystem.isHandler(tile, ForgeDirection.UP))
             {
                 //test fill on target
@@ -107,7 +105,7 @@ public class TileNodePlateGen extends TilePowerNode implements IEnergyBufferProv
 
         boolean somethingAbove = false;
         int count = 0;
-        List<Entity> list = world().getEntitiesWithinAABB(Entity.class, stepBounds);
+        List<Entity> list = world().unwrap().getEntitiesWithinAABB(Entity.class, stepBounds);
         for (Entity entity : list)
         {
             if (entity != null && entity.isEntityAlive() && entity.onGround)

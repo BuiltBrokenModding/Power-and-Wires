@@ -1,8 +1,8 @@
 package com.builtbroken.paw;
 
-import com.builtbroken.mc.lib.mod.AbstractMod;
-import com.builtbroken.mc.lib.mod.AbstractProxy;
-import com.builtbroken.mc.lib.mod.ModCreativeTab;
+import com.builtbroken.mc.framework.mod.AbstractMod;
+import com.builtbroken.mc.framework.mod.AbstractProxy;
+import com.builtbroken.mc.framework.mod.ModCreativeTab;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;

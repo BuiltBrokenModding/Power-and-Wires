@@ -15,8 +15,8 @@ import com.builtbroken.mc.api.energy.IEnergyBufferProvider;
 import com.builtbroken.mc.api.tile.ConnectionType;
 import com.builtbroken.mc.api.tile.ITileConnection;
 import com.builtbroken.mc.api.tile.node.ITileNode;
-import com.builtbroken.mc.framework.logic.wrapper.TileEntityWrapper;
-import com.builtbroken.mc.lib.energy.UniversalEnergySystem;
+import com.builtbroken.mc.framework.energy.UniversalEnergySystem;
+import com.builtbroken.mc.seven.framework.logic.TileEntityWrapper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -93,7 +93,7 @@ public class TileWrappedBattery extends TileEntityWrapper implements IEnergyBuff
     {
         if (getTileNode() instanceof ITileConnection)
         {
-            TileEntity connector = toPos().add(from).getTileEntity(world());
+            TileEntity connector = toPos().add(from).getTileEntity(worldObj);
             if (((ITileConnection) getTileNode()).canConnect(connector, ConnectionType.RF_POWER, from))
             {
                 return true;
